@@ -29,7 +29,36 @@ export default function CustomerScreen() {
         setMensaje('')
     },2000)
     reset();
+  };
+
+
+  const onUpdate = async (data) => {
+    //console.log(data);
+    const response = await axios.put(`http://127.0.0.1:3000/api/clientes/${isSearch}`, {
+        nombre:data.firstName,
+        apellidos:data.lastName,
+    });
+    setIsError(false);
+    setMensaje('Cliente actualizado correctamente');
+    setTimeout(()=>{
+        setMensaje('')
+        reset();
+    },2000);
+    setSearch('');
   }
+
+  const onDele = async (data) =>{
+    if(confirm(`Esta seguro de eliminar al cliente ${data.firstName} ${data.lastName}`)){
+      const response = await axios.delete(`http://127.0.0.1:3000/api/clientes/${isSearch}`);
+      setIsError(false);
+      setMensaje('Cliente eliminado correctamente...');
+      setTimeout(() =>{
+        setMensaje('');
+        reset();
+      },2000)
+      setSearch('');
+    }
+  };
 
   const onSearch = async()=>{
     const response = await axios.get(`http://127.0.0.1:3000/api/clientes/${isSearch}`);
@@ -127,7 +156,7 @@ export default function CustomerScreen() {
           <Button 
           icon="update" 
           mode="contained" 
-          onPress={() => console.log('Pressed')}
+          onPress={handleSubmit(onUpdate)}
           style={{backgroundColor:'green', marginRight:10}}
           >
            Actualizar
@@ -135,7 +164,7 @@ export default function CustomerScreen() {
           <Button 
           icon="delete-empty-outline" 
           mode="contained" 
-          onPress={() => console.log('Pressed')}
+          onPress={handleSubmit(onDele)}
           style={{backgroundColor:'red'}}
           >
             Eliminar
