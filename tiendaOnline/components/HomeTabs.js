@@ -12,17 +12,23 @@ export default function HomeTabs() {
     <Tab.Navigator
         screenOptions={{
             headerShown:false,
-            tabBarInactiveBackgroundColor:'blue',
+            tabBarActiveBackgroundColor: '#45a3fd',
+            tabBarInactiveBackgroundColor:'#0583fc',
         }}
     >
-      <Tab.Screen name="Customer" component={CustomerScreen} options={{title:'Clientes',
+      <Tab.Screen name="Customer" component={CustomerScreen} options={{title:'Reservas',
+       tabBarIcon:({tabInfo})=>(
+         <MaterialIcons name="account-circle" size={30} color='white' />
+       )
+       }} />
+      {/* <Tab.Screen name="Customer" component={CustomerScreen} options={{title:'Reservas',
        tabBarIcon:({color})=>(
          <MaterialIcons name="account-circle" size={25} color='red' />
        )
-       }} />
-      <Tab.Screen name="List" component={ListCustomer} options={{title:'Listado clientes',
-      tabBarIcon:({color})=>(
-        <MaterialIcons name="view-list" size={25} color='green' />
+       }} /> */}
+      <Tab.Screen name="List" component={ListCustomer} options={{title:'Listado Reservas',
+      tabBarIcon:({tabInfo})=>(
+        <MaterialIcons name="view-list" size={30} color='white' />
       )
     }} />
     </Tab.Navigator>

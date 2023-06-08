@@ -9,7 +9,14 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeTabs} options={{title:'Sistema de Invetario'}} />
+        <Stack.Screen name="Home" component={HomeTabs} options={{title:'Reservas Dreams-Travel',
+        headerStyle:{
+          backgroundColor:"#000090"
+        },
+        headerTintColor: "white",
+      }}
+        
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
