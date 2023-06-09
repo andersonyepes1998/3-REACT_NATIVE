@@ -6,7 +6,7 @@ import axios from "axios";
 export default function ListCustomer(){
     const [dataCustomer, setDataCustomer] = useState([]);
     const getCustomers = async() =>{
-        const customers = await axios.get(`http://127.0.0.1:3000/buscareserva`);
+        const customers = await axios.get(`http://127.0.0.1:3000/buscarhabitaciones`);
         setDataCustomer(customers.data);
     }
 
@@ -19,12 +19,11 @@ export default function ListCustomer(){
 
     return(
         <View style={styles.container}>
-            <Text style={{color:'orange', fontSize:25}}>Listado de Reservas</Text>
+            <Text style={{color:'orange', fontSize:25}}>Listado de Habitaciones</Text>
 
             <FlatList
                 data={dataCustomer}
-                renderItem={({item}) => (<Text>{item.nombrecliente} {item.apellidocliente} / {item.telefonocliente} / {item.fechainicioreserva} / {item.fechafinalreserva}
-                    
+                renderItem={({item}) => (<Text>{item.nombre} / {item.descripcion} / {item.precio} / {item.numeropersonas}
                 </Text>)}
                 //keyExtractor={item => item.id}
             />

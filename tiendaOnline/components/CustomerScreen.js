@@ -13,30 +13,29 @@ export default function CustomerScreen() {
 
   const { control, handleSubmit, formState: { errors }, reset, setValue } = useForm({
     defaultValues: {
-      nombrecliente: '',
-      apellidocliente: '',
-      telefonocliente: '',
-      fechainicioreserva: '',
-      fechafinalreserva: ''
+      nombre: '',
+      descripcion: '',
+      precio: '',
+      numeropersonas: '',
     }
   });
   const onSave = async (data) => {
     //console.log(data);
-    let nombre = data.nombrecliente;
-    let apellidos = data.apellidocliente;
-    let telefono = data.telefonocliente;
-    let fechainicio = data.fechainicioreserva;
-    let fechafinal = data.fechafinalreserva;
-    const response = await axios.post(`http://127.0.0.1:3000/creareservas`, {
+    let nombre = data.nombre;
+    let descripcion = data.descripcion;
+    let precio = data.precio;
+    let numeropersonas = data.numeropersonas;
+    const response = await axios.post(`http://127.0.0.1:3000/registrarhabitacion`, {
       nombre,
-      apellidos,
-      telefono,
-      fechainicio,
-      fechafinal
+      descripcion,
+      precio,
+      numeropersonas
+      
     });
     try{
+      
        setIsError(false);
-    setMensaje('Reserva creada correctamente');
+    setMensaje('Habitacion creada correctamente');
     setTimeout(()=>{
         setMensaje('')
     },2000)
@@ -53,12 +52,14 @@ export default function CustomerScreen() {
 
   const onUpdate = async (data) => {
     //console.log(data);
-    const response = await axios.put(`http://127.0.0.1:3000/editareserva/${isSearch}`, {
-        nombre:data.firstName,
-        apellidos:data.lastName,
+    const response = await axios.put(`http://127.0.0.1:3000/editarhabitacion/${isSearch}`, {
+        nombre:data.nombre,
+        descripcion:data.descripcion,
+        precio:data.precio,
+        numeropersonas:data.numeropersonas
     });
     setIsError(false);
-    setMensaje('Reserva actualizada correctamente');
+    setMensaje('Habitacion actualizada correctamente');
     setTimeout(()=>{
         setMensaje('')
         reset();
@@ -67,10 +68,10 @@ export default function CustomerScreen() {
   }
 
   const onDele = async (data) =>{
-    if(confirm(`Esta seguro de eliminar al cliente ${data.firstName} ${data.lastName}`)){
-      const response = await axios.delete(`http://127.0.0.1:3000/api/clientes/${isSearch}`);
+    if(confirm(`Esta seguro de eliminar la habitacion ${data.nombre}`)){
+      const response = await axios.delete(`http://127.0.0.1:3000/eliminar/${isSearch}`);
       setIsError(false);
-      setMensaje('Cliente eliminado correctamente...');
+      setMensaje('Habitacion eliminado correctamente...');
       setTimeout(() =>{
         setMensaje('');
         reset();
@@ -79,19 +80,22 @@ export default function CustomerScreen() {
     }
   };
 
+
   const onSearch = async()=>{
-    const response = await axios.get(`http://127.0.0.1:3000/buscareservas/${isSearch}`);
-    console.log(response.data)
     try{
-      if (!response.data.error){
-        setValue('nombrecliente', response.data.nombre);
-        setValue('apellidocliente', response.data.apellidos);
-        setValue('telefonocliente', response.data.telefono);
-        setValue('fechainicioreserva', response.data.fechainicio);
-        setValue('fechafinalreserva', response.data.fechafinal);
-        setIsError(false);
-        setMensaje('');
-    }else{
+    const response = await axios.get(`http://127.0.0.1:3000/buscarhabitacion/${isSearch}`);
+    console.log(response.data.habitacion.nombre)
+    
+      if (response.data){
+        if(!response.data.error){
+          setValue('nombre', response.data.habitacion.nombre);
+          setValue('descripcion', response.data.habitacion.descripcion);
+          setValue('precio', response.data.habitacion.precio);
+          setValue('numeropersonas', response.data.habitacion.numeropersonas);
+          setIsError(false);
+          setMensaje('');
+        }
+      }else{
         setIsError(true);
         setMensaje('id de cliente no existe');
     }
@@ -125,7 +129,7 @@ export default function CustomerScreen() {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              label="Nombre del cliente"
+              label="Nombre"
               mode="outlined"
               left={<TextInput.Icon icon="account"/>}
               style={{marginBottom: 15}}
@@ -134,10 +138,10 @@ export default function CustomerScreen() {
               value={value}
             />
           )}
-          name="nombrecliente"
+          name="nombre"
     />
-        {errors.nombrecliente?.type == 'required' && <Text style={{color:'red'}}>El nombre es obligatorio</Text>}
-        {errors.nombrecliente?.type == 'maxLength' && <Text style={{color:'red'}}>El nombre no debe de pasar mas</Text>}
+        {errors.nombre?.type == 'required' && <Text style={{color:'red'}}>El nombre es obligatorio</Text>}
+        {errors.nombre?.type == 'maxLength' && <Text style={{color:'red'}}>El nombre no debe de pasar mas</Text>}
 
 
         <Controller
@@ -148,7 +152,7 @@ export default function CustomerScreen() {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              label="Apellido del cliente"
+              label="Description"
               mode="outlined"
               left={<TextInput.Icon icon="account-arrow-down"/>}
               style={{marginBottom: 15}}
@@ -157,10 +161,10 @@ export default function CustomerScreen() {
               value={value}
             />
           )}
-          name="apellidocliente"
+          name="descripcion"
         />
 
-        {errors.apellidocliente && <Text style={{color:'red'}}>El Apellido es obligatorio</Text>}
+        {errors.descripcion && <Text style={{color:'red'}}>El Apellido es obligatorio</Text>}
 
     <Controller
       control={control}
@@ -170,7 +174,7 @@ export default function CustomerScreen() {
       }}
       render={({ field: { onChange, onBlur, value } }) => (
         <TextInput
-          label="Telefono"
+          label="precio"
           mode="outlined"
           left={<TextInput.Icon icon="phone"/>}
           style={{marginBottom: 15}}
@@ -179,10 +183,10 @@ export default function CustomerScreen() {
           value={value}
         />
       )}
-      name="telefonocliente"
+      name="precio"
     />
-        {errors.telefonocliente?.type == 'required' && <Text style={{color:'red'}}>El nombre es obligatorio</Text>}
-        {errors.telefonocliente?.type == 'maxLength' && <Text style={{color:'red'}}>El nombre no debe de pasar mas</Text>}
+        {errors.precio?.type == 'required' && <Text style={{color:'red'}}>El nombre es obligatorio</Text>}
+        {errors.precio?.type == 'maxLength' && <Text style={{color:'red'}}>El nombre no debe de pasar mas</Text>}
         
         <Controller
           control={control}
@@ -192,7 +196,7 @@ export default function CustomerScreen() {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              label="Fecha de Inicio"
+              label="Numero de personas"
               mode="outlined"
               left={<TextInput.Icon icon="calendar-range"/>}
               style={{marginBottom: 15}}
@@ -201,12 +205,12 @@ export default function CustomerScreen() {
               value={value}
             />
           )}
-          name="fechainicioreserva"
+          name="numeropersonas"
     />
-        {errors.fechainicioreserva?.type == 'required' && <Text style={{color:'red'}}>El nombre es obligatorio</Text>}
-        {errors.fechainicioreserva?.type == 'maxLength' && <Text style={{color:'red'}}>El nombre no debe de pasar mas</Text>}
+        {errors.numeropersonas?.type == 'required' && <Text style={{color:'red'}}>El nombre es obligatorio</Text>}
+        {errors.numeropersonas?.type == 'maxLength' && <Text style={{color:'red'}}>El nombre no debe de pasar mas</Text>}
         
-        <Controller
+        {/* <Controller
           control={control}
           rules={{
           required: true,
@@ -226,7 +230,7 @@ export default function CustomerScreen() {
           name="fechafinalreserva"
     />
         {errors.fechafinalreserva?.type == 'required' && <Text style={{color:'red'}}>El nombre es obligatorio</Text>}
-        {errors.fechafinalreserva?.type == 'maxLength' && <Text style={{color:'red'}}>El nombre no debe de pasar mas</Text>}
+        {errors.fechafinalreserva?.type == 'maxLength' && <Text style={{color:'red'}}>El nombre no debe de pasar mas</Text>} */}
 
                 
         <Text style={{color: isError ? 'red':'green'}}>{mensaje}</Text>
@@ -238,7 +242,7 @@ export default function CustomerScreen() {
           onPress={handleSubmit(onSave)} 
           style={{backgroundColor:'red',marginRight:10}}
           >
-            Guardar-Reserva
+            Guardar-Habitacion
           </Button>
 
           <Button 
@@ -247,7 +251,7 @@ export default function CustomerScreen() {
           onPress={onSearch}
           style={{backgroundColor:'red'}}
           >
-            Buscar-Reserva
+            Buscar-Habitacion
           </Button>
         </View>
 
@@ -258,7 +262,7 @@ export default function CustomerScreen() {
           onPress={handleSubmit(onUpdate)}
           style={{backgroundColor:'red', marginRight:10}}
           >
-           Actualizar-Reserva
+           Actualizar-Habitacion
           </Button>
           <Button 
           icon="delete-empty-outline" 
@@ -266,7 +270,7 @@ export default function CustomerScreen() {
           onPress={handleSubmit(onDele)}
           style={{backgroundColor:'red'}}
           >
-            Eliminar-Reserva
+            Eliminar-Habitacion
           </Button>
 
         </View>
